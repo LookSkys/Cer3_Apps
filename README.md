@@ -1,23 +1,24 @@
 <body>
 
-<h1>Flutter Firebase App</h1>
+<h1>Gestión de Tareas - Flutter Firebase App</h1>
 
-<p>Esta es una aplicación móvil desarrollada en Flutter que utiliza Firebase para la autenticación y la base de datos.</p>
+<p>Esta es una aplicación móvil desarrollada en Flutter que utiliza Firebase para la autenticación y la base de datos. La aplicación está diseñada para gestionar tareas.</p>
 
 <h2>Características</h2>
 <ul>
-  <li>Dos colecciones en Firestore con documentos que tienen al menos 3 campos de diferentes tipos (String, Number, Timestamp).</li>
+  <li>Dos colecciones en Firestore: <code>tasks</code> y <code>categories</code>.</li>
+  <li>Documentos con al menos 3 campos de diferentes tipos (String, Number, Timestamp).</li>
   <li>Fechas formateadas.</li>
   <li>Formularios con validaciones.</li>
   <li>Pantallas:
     <ul>
-      <li>Mostrar datos.</li>
-      <li>Detalle de un documento.</li>
-      <li>Formulario para agregar documentos.</li>
-      <li>Opción para borrar documentos con confirmación.</li>
+      <li>Mostrar lista de tareas.</li>
+      <li>Detalle de una tarea.</li>
+      <li>Formulario para agregar tareas.</li>
+      <li>Opción para borrar tareas con confirmación.</li>
     </ul>
   </li>
-  <li>Autenticación con Firebase utilizando un proveedor (excepto Anónimo y Teléfono).</li>
+  <li>Autenticación con Firebase utilizando Google.</li>
 </ul>
 
 <h2>Configuración del Proyecto</h2>
@@ -30,16 +31,16 @@
 </ol>
 
 <h2>Firestore</h2>
-<p>Definir colecciones y agregar datos.</p>
+<p>Definir colecciones <code>tasks</code> y <code>categories</code> y agregar datos.</p>
 
 <h2>Autenticación</h2>
-<p>Configurar y utilizar Firebase Auth con un proveedor como Google.</p>
+<p>Configurar y utilizar Firebase Auth con Google.</p>
 
 <h2>Estructura de la Aplicación</h2>
 <p>Implementar pantallas y navegación.</p>
 
 <h2>Funcionalidades</h2>
-<p>Mostrar, agregar, y eliminar documentos de Firestore.</p>
+<p>Mostrar, agregar y eliminar tareas de Firestore.</p>
 
 </body>
 </html>
