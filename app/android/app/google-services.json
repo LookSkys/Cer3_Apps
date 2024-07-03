@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "232248397057",
+    "project_id": "fir-app-ef645",
+    "storage_bucket": "fir-app-ef645.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:232248397057:android:a85cba264d7a53b97a1f00",
+        "android_client_info": {
+          "package_name": "cl.cer3.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCGIIOOrqGS8UYfd_TCSO5OBok1FalvJS0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
