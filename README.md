@@ -6,7 +6,7 @@
 
 <h2>Características</h2>
 <ul>
-  <li>Dos colecciones en Firestore: <code>tasks</code> y <code>categories</code>.</li>
+  <li>Dos colecciones en Firestore: <code>tareas</code> y <code>categorias</code>.</li>
   <li>Documentos con al menos 3 campos de diferentes tipos (String, Number, Timestamp).</li>
   <li>Fechas formateadas.</li>
   <li>Formularios con validaciones.</li>
@@ -31,7 +31,7 @@
 </ol>
 
 <h2>Firestore</h2>
-<p>Definir colecciones <code>tasks</code> y <code>categories</code> y agregar datos.</p>
+<p>Definir colecciones <code>tareas</code> y <code>categorias</code> y agregar datos.</p>
 
 <h2>Autenticación</h2>
 <p>Configurar y utilizar Firebase Auth con Google.</p>
