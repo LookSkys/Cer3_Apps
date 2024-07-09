@@ -13,6 +13,30 @@ class HomeScreen extends StatelessWidget {
     Navigator.pushReplacementNamed(context, '/login');
   }
 
+  Future<void> _enrollUser(
+      BuildContext context, DocumentSnapshot horario) async {
+    final User? user = _auth.currentUser;
+    if (user != null) {
+      final enrollementRef =
+          horario.reference.collection('enrolamiento').doc(user.uid);
+      final enrollementSnapshot = await enrollementRef.get();
+
+      if (!enrollementSnapshot.exists) {
+        await enrollementRef.set({
+          'user_id': user.uid,
+          'timestamp': FieldValue.serverTimestamp(),
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Inscripción exitosa')),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Ya estás inscrito en este horario')),
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -67,7 +91,7 @@ class HomeScreen extends StatelessWidget {
                     title: Text(
                         '${horario['titulo']} - ${startTime.format(context)} a ${endTime.format(context)}'),
                     trailing: Text('$enrolledCount / $maxCapacity'),
-                    onTap: () {},
+                    onTap: () => _enrollUser(context, horario),
                   );
                 },
               );
