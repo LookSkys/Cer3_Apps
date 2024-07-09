@@ -8,7 +8,6 @@ class LoginScreen extends StatelessWidget {
 
   Future<User?> _signInWithGoogle() async {
     try {
-      // Iniciar sesión con Google
       final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
       if (googleUser != null) {
         final GoogleSignInAuthentication googleAuth =
@@ -17,7 +16,6 @@ class LoginScreen extends StatelessWidget {
           accessToken: googleAuth.accessToken,
           idToken: googleAuth.idToken,
         );
-        // Autenticar con Firebase
         final UserCredential userCredential =
             await _auth.signInWithCredential(credential);
         return userCredential.user;
@@ -40,14 +38,10 @@ class LoginScreen extends StatelessWidget {
           children: <Widget>[
             ElevatedButton(
               onPressed: () async {
-                // Iniciar sesión con Google
                 User? user = await _signInWithGoogle();
                 if (user != null) {
-                  // Navegar a la siguiente pantalla o realizar alguna acción
-                  Navigator.pushReplacementNamed(context,
-                      '/home'); // Ejemplo: Redirigir a la pantalla principal
+                  Navigator.pushReplacementNamed(context, '/home');
                 } else {
-                  // Mostrar mensaje de error o manejar la falta de inicio de sesión
                   showDialog(
                     context: context,
                     builder: (BuildContext context) {
