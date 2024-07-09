@@ -31,8 +31,8 @@ class LoginScreen extends StatelessWidget {
             userDoc.set({
               'correo': user.email,
               'fecha_registro': FieldValue.serverTimestamp(),
-              'nombre': user.displayName,
-              'rut': '', // Asigna el RUT adecuado si es necesario
+              'nombre':
+                  user.displayName, // Asigna el RUT adecuado si es necesario
             });
           }
         }

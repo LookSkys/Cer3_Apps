@@ -14,26 +14,46 @@ class HomeScreen extends StatelessWidget {
   }
 
   Future<void> _enrollUser(
-      BuildContext context, DocumentSnapshot horario) async {
-    final User? user = _auth.currentUser;
-    if (user != null) {
-      final enrollementRef =
-          horario.reference.collection('enrolamiento').doc(user.uid);
-      final enrollementSnapshot = await enrollementRef.get();
+      DocumentSnapshot horario, BuildContext context) async {
+    final user = _auth.currentUser;
 
-      if (!enrollementSnapshot.exists) {
-        await enrollementRef.set({
-          'user_id': user.uid,
-          'timestamp': FieldValue.serverTimestamp(),
-        });
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Inscripción exitosa')),
-        );
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Ya estás inscrito en este horario')),
-        );
+    if (user != null) {
+      try {
+        await FirestoreService().enrollUser(horario, user);
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('Inscripción exitosa'),
+        ));
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('Error: $e'),
+        ));
       }
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('Inicia sesión para inscribirte'),
+      ));
+    }
+  }
+
+  Future<void> _unenrollUser(
+      DocumentSnapshot horario, BuildContext context) async {
+    final user = _auth.currentUser;
+
+    if (user != null) {
+      try {
+        await FirestoreService().unenrollUser(horario, user);
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('Desinscripción exitosa'),
+        ));
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('Error: $e'),
+        ));
+      }
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('Inicia sesión para desinscribirte'),
+      ));
     }
   }
 
@@ -86,12 +106,22 @@ class HomeScreen extends StatelessWidget {
                   }
 
                   int enrolledCount = enrolledSnapshot.data!.docs.length;
+                  bool isEnrolled = enrolledSnapshot.data!.docs
+                      .any((doc) => doc.id == _auth.currentUser?.uid);
 
                   return ListTile(
                     title: Text(
                         '${horario['titulo']} - ${startTime.format(context)} a ${endTime.format(context)}'),
-                    trailing: Text('$enrolledCount / $maxCapacity'),
-                    onTap: () => _enrollUser(context, horario),
+                    subtitle: Text('$enrolledCount / $maxCapacity'),
+                    trailing: isEnrolled
+                        ? ElevatedButton(
+                            onPressed: () => _unenrollUser(horario, context),
+                            child: Text('Desinscribirse'),
+                          )
+                        : ElevatedButton(
+                            onPressed: () => _enrollUser(horario, context),
+                            child: Text('Inscribirse'),
+                          ),
                   );
                 },
               );
