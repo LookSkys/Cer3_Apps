@@ -1,4 +1,4 @@
-import 'package:app/pages/home.dart';
+import 'package:app/pages/tabs/horarios.dart';
 import 'package:app/pages/login.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -25,7 +25,7 @@ class MyApp extends StatelessWidget {
         initialRoute: '/login',
         routes: {
           '/login': (context) => LoginScreen(),
-          '/home': (context) => HomeScreen(),
+          '/horarios': (context) => Horarios(),
         });
   }
 }

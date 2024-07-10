@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
-class HomeScreen extends StatelessWidget {
+class Horarios extends StatelessWidget {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   void _signOut(BuildContext context) async {
