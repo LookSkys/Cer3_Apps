@@ -1,6 +1,7 @@
 import 'package:app/services/firestore_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
@@ -90,7 +91,7 @@ class RutinasScreen extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton(
           onPressed: () {
-            // Acción a realizar al presionar el botón flotante
+            Navigator.pushNamed(context, '/agregarRutina');
           },
           backgroundColor: Colors.orange, // Color de fondo naranja
           child: Icon(Icons.add, color: Colors.black),
@@ -104,6 +105,61 @@ class RutinasScreen extends StatelessWidget {
           .endFloat, // Ubicación en la esquina inferior derecha
     );
   }
+}
+
+void _confirmarEliminacion(BuildContext context, String rutinaId) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        backgroundColor: Color(0xff091819),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+        title: Row(
+          children: [
+            Icon(Icons.warning, color: Colors.red),
+            SizedBox(width: 10),
+            Text(
+              'Confirmar Eliminación',
+              style: TextStyle(color: Colors.white),
+            ),
+          ],
+        ),
+        content: Text(
+          '¿Estás seguro de que quieres eliminar esta rutina?',
+          style: TextStyle(color: Colors.white),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            style: TextButton.styleFrom(
+              foregroundColor: Colors.white,
+            ),
+            child: Text('Cancelar'),
+          ),
+          TextButton(
+            onPressed: () {
+              FirebaseFirestore.instance
+                  .collection('Rutinas')
+                  .doc(rutinaId)
+                  .delete()
+                  .then((_) {
+                Navigator.of(context).pop(); // Cierra el cuadro de diálogo
+                Navigator.of(context).pop(); // Vuelve a la pantalla anterior
+              });
+            },
+            style: TextButton.styleFrom(
+              foregroundColor: Colors.red,
+            ),
+            child: Text('Eliminar'),
+          ),
+        ],
+      );
+    },
+  );
 }
 
 class DetalleRutinaScreen extends StatelessWidget {
@@ -130,7 +186,7 @@ class DetalleRutinaScreen extends StatelessWidget {
           titulo,
           style: TextStyle(color: Colors.white),
         ),
-        backgroundColor: Colors.black,
+        backgroundColor: Color(0xff091819),
         iconTheme: IconThemeData(color: Colors.white), // Fondo negro
       ),
       body: Padding(
@@ -251,20 +307,20 @@ class DetalleRutinaScreen extends StatelessWidget {
             SizedBox(height: 16),
             Center(
               child: Container(
-                width: 500,
+                width: double.infinity,
                 height: 50, // Alto del contenedor
                 decoration: BoxDecoration(
                   color: Colors.red, // Color de fondo del contenedor
-                  shape: BoxShape.rectangle, // Forma circular del contenedor
+                  shape: BoxShape.rectangle, // Forma rectangular del contenedor
                 ),
                 child: IconButton(
-                  icon: Icon(Icons.delete, color: Colors.black),
+                  icon: Icon(Icons.delete, color: Colors.white),
                   onPressed: () {
-                    // Acción a realizar al presionar el botón de borrar
+                    _confirmarEliminacion(context, rutina.id);
                   },
                 ),
               ),
-            )
+            ),
           ],
         ),
       ),

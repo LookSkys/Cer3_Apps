@@ -1,4 +1,5 @@
 import 'package:app/pages/nav.dart';
+import 'package:app/pages/tabs/agregarRutinas.dart';
 import 'package:app/pages/tabs/horarios.dart';
 import 'package:app/pages/login.dart';
 import 'package:app/pages/tabs/rutinas.dart';
@@ -30,6 +31,7 @@ class MyApp extends StatelessWidget {
           '/home': (context) => HomeScreen(),
           '/horarios': (context) => Horarios(),
           '/rutinas': (context) => RutinasScreen(),
+          '/agregarRutina': (context) => AgregarRutinaScreen(),
         });
   }
 }
