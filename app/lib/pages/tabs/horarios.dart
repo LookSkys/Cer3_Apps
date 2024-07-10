@@ -3,7 +3,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-
 class Horarios extends StatelessWidget {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
@@ -54,9 +53,7 @@ class Horarios extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Horarios'),
-      ),
+      backgroundColor: Color(0xff091819), // Fondo negro
       body: StreamBuilder(
         stream: FirestoreService().horarios(),
         builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
@@ -85,11 +82,65 @@ class Horarios extends StatelessWidget {
                 builder:
                     (context, AsyncSnapshot<QuerySnapshot> enrolledSnapshot) {
                   if (!enrolledSnapshot.hasData) {
-                    return ListTile(
-                      title: Text(
-                          '${horario['titulo']} - ${startTime.format(context)} a ${endTime.format(context)}'),
-                      subtitle: Text('Capacidad máxima: $maxCapacity'),
-                      trailing: CircularProgressIndicator(),
+                    return Container(
+                      margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                      decoration: BoxDecoration(
+                        color: Colors.orange, // Fondo naranja
+                        borderRadius:
+                            BorderRadius.circular(10), // Bordes redondeados
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black26,
+                            blurRadius: 5,
+                            offset: Offset(0, 2),
+                          ),
+                        ],
+                        border: Border.all(color: Colors.black),
+                      ),
+                      child: ListTile(
+                        title: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              horario['titulo'],
+                              style: TextStyle(
+                                color: Colors.black, // Texto negro
+                                fontWeight: FontWeight.bold, // Texto en negrita
+                              ),
+                            ),
+                            Row(
+                              children: [
+                                Icon(Icons.access_time, color: Colors.black54),
+                                SizedBox(
+                                    width:
+                                        4), // Espacio entre el icono y el texto
+                                Text(
+                                  '${startTime.format(context)} a ${endTime.format(context)}',
+                                  style: TextStyle(
+                                      color:
+                                          Colors.black54), // Texto gris oscuro
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                        subtitle: Row(
+                          children: [
+                            Icon(Icons.people, color: Colors.black54),
+                            SizedBox(
+                                width: 4), // Espacio entre el icono y el texto
+                            Text(
+                              'Capacidad máxima: $maxCapacity',
+                              style: TextStyle(
+                                  color: Colors.black54), // Texto gris oscuro
+                            ),
+                          ],
+                        ),
+                        trailing: CircularProgressIndicator(
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                              Colors.orange), // Circular negro
+                        ),
+                      ),
                     );
                   }
 
@@ -97,19 +148,83 @@ class Horarios extends StatelessWidget {
                   bool isEnrolled = enrolledSnapshot.data!.docs
                       .any((doc) => doc.id == _auth.currentUser?.uid);
 
-                  return ListTile(
-                    title: Text(
-                        '${horario['titulo']} - ${startTime.format(context)} a ${endTime.format(context)}'),
-                    subtitle: Text('$enrolledCount / $maxCapacity'),
-                    trailing: isEnrolled
-                        ? ElevatedButton(
-                            onPressed: () => _unenrollUser(horario, context),
-                            child: Text('Desinscribirse'),
-                          )
-                        : ElevatedButton(
-                            onPressed: () => _enrollUser(horario, context),
-                            child: Text('Inscribirse'),
+                  return Container(
+                    margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                    decoration: BoxDecoration(
+                      color: Color(0xffD99058), // Fondo naranja
+                      borderRadius:
+                          BorderRadius.circular(10), // Bordes redondeados
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black26,
+                          blurRadius: 5,
+                          offset: Offset(0, 2),
+                        ),
+                      ],
+                      border: Border.all(color: Colors.black),
+                    ),
+                    child: ListTile(
+                      title: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            horario['titulo'],
+                            style: TextStyle(
+                              color: Colors.black, // Texto negro
+                              fontWeight: FontWeight.bold, // Texto en negrita
+                            ),
                           ),
+                          Row(
+                            children: [
+                              Icon(Icons.access_time, color: Colors.black54),
+                              SizedBox(
+                                  width:
+                                      4), // Espacio entre el icono y el texto
+                              Text(
+                                '${startTime.format(context)} a ${endTime.format(context)}',
+                                style: TextStyle(
+                                    color: Colors.black54), // Texto gris oscuro
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                      subtitle: Row(
+                        children: [
+                          Icon(Icons.people, color: Colors.black54),
+                          SizedBox(
+                              width: 4), // Espacio entre el icono y el texto
+                          Text(
+                            '$enrolledCount / $maxCapacity',
+                            style: TextStyle(
+                                color: Colors.black), // Texto gris oscuro
+                          ),
+                        ],
+                      ),
+                      trailing: isEnrolled
+                          ? ElevatedButton(
+                              onPressed: () => _unenrollUser(horario, context),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.black, // Fondo negro
+                              ),
+                              child: Text(
+                                'Desinscribirse',
+                                style: TextStyle(
+                                    color: Color(0xffD99058)), // Texto naranja
+                              ),
+                            )
+                          : ElevatedButton(
+                              onPressed: () => _enrollUser(horario, context),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.black, // Fondo negro
+                              ),
+                              child: Text(
+                                'Inscribirse',
+                                style: TextStyle(
+                                    color: Colors.white), // Texto naranja
+                              ),
+                            ),
+                    ),
                   );
                 },
               );

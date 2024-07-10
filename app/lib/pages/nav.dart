@@ -16,35 +16,54 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    TextStyle estilo_titulo = TextStyle(fontSize: 25,fontWeight: FontWeight.bold ,color: Colors.white);
+    TextStyle estiloTitulo = TextStyle(
+      fontSize: 25,
+      fontWeight: FontWeight.bold,
+      color: Colors.white,
+    );
+
     return Center(
       child: DefaultTabController(
         length: 2,
         child: Scaffold(
           appBar: AppBar(
-            title: Text('Workout App! 🏋️‍♂️', style: estilo_titulo),
+            title: StreamBuilder<User?>(
+              stream: _auth.authStateChanges(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Text('Cargando...', style: estiloTitulo);
+                } else if (snapshot.hasError) {
+                  return Text('Error', style: estiloTitulo);
+                } else if (snapshot.hasData && snapshot.data != null) {
+                  return Text(
+                    'Bienvenido, ${snapshot.data!.displayName}!',
+                    style: estiloTitulo,
+                  );
+                } else {
+                  return Text('Workout App! 🏋️‍♂️', style: estiloTitulo);
+                }
+              },
+            ),
             actions: [
-            IconButton(
-            icon: Icon(Icons.logout, color: Colors.white),
-            onPressed: () => _signOut(context),
-          ),
-        ],
-            backgroundColor: Colors.black,
-            bottom:
-             TabBar(
-              //hace scrolleable el tabBar
-              //isScrollable: true,
-              //estilo de las tabs
-              labelStyle: TextStyle(color: Colors.green),
+              IconButton(
+                icon: Icon(Icons.logout, color: Colors.white),
+                onPressed: () => _signOut(context),
+              ),
+            ],
+            backgroundColor: Color(0xff091819),
+            bottom: TabBar(
+              labelStyle: TextStyle(color: Colors.orange),
               unselectedLabelStyle: TextStyle(color: Colors.grey),
-              tabs: [               
+              indicatorColor: Colors.orange,
+              indicatorSize: TabBarIndicatorSize.tab,
+              tabs: [
                 Tab(
                   text: 'Horarios',
-                  icon: Icon(MdiIcons.tournament),
+                  icon: Icon(MdiIcons.clock),
                 ),
                 Tab(
                   text: 'Rutinas',
-                  icon: Icon(MdiIcons.accountGroupOutline),
+                  icon: Icon(MdiIcons.weightLifter),
                 ),
               ],
             ),
