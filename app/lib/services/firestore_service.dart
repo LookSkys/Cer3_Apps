@@ -10,6 +10,49 @@ class FirestoreService {
         .snapshots();
   }
 
+  Future<void> crearRutina(
+    String titulo,
+    String descripcion,
+    String duracion,
+    String nivel,
+    List<String> ejercicios,
+    String creadorId,
+  ) async {
+    try {
+      await FirebaseFirestore.instance.collection('Rutinas').add({
+        'titulo': titulo,
+        'descripcion': descripcion,
+        'duracion': duracion,
+        'nivel': nivel,
+        'ejercicios': ejercicios,
+        'creador': creadorId, // Cambiado a 'creador' en lugar de 'creadorId'
+        'fecha de creación': Timestamp.now(),
+      });
+    } catch (e) {
+      print('Error al crear la rutina: $e');
+      throw Exception('No se pudo crear la rutina');
+    }
+  }
+
+  Future<String> getUserName(String userId) async {
+    try {
+      DocumentSnapshot userSnapshot = await FirebaseFirestore.instance
+          .collection('Usuarios')
+          .doc(userId)
+          .get();
+
+      if (userSnapshot.exists) {
+        return userSnapshot[
+            'nombre']; // Accede al campo 'nombre' en el documento del usuario
+      } else {
+        return 'Usuario Desconocido';
+      }
+    } catch (e) {
+      print('Error obteniendo el nombre del usuario: $e');
+      return 'Usuario Desconocido';
+    }
+  }
+
   Stream<QuerySnapshot> usuarios() {
     return FirebaseFirestore.instance.collection('Usuarios').snapshots();
   }

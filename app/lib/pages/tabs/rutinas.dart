@@ -25,69 +25,83 @@ class RutinasScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: Color(0xff091819), // Fondo negro
       body: StreamBuilder(
-          stream: FirestoreService().rutinas(),
-          builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
-            if (!snapshot.hasData) {
-              return Center(
-                child: CircularProgressIndicator(),
-              );
-            }
-            return ListView.builder(
-              itemCount: snapshot.data!.docs.length,
-              itemBuilder: (context, index) {
-                var rutina = snapshot.data!.docs[index];
-                var descripcion = rutina['descripcion'];
-                var fechaCreacion = rutina['fecha de creación'];
-                var nivel = rutina['nivel'];
-                var titulo = rutina['titulo'];
-
-                // Formatea la fecha de creación
-                var formattedFechaCreacion =
-                    DateFormat.yMd().format(fechaCreacion.toDate());
-
-                return Container(
-                  margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                  decoration: BoxDecoration(
-                    color: Color(0xffD99058), // Fondo naranja
-                    borderRadius:
-                        BorderRadius.circular(10), // Bordes redondeados
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black26,
-                        blurRadius: 5,
-                        offset: Offset(0, 2),
-                      ),
-                    ],
-                    border: Border.all(color: Colors.black),
-                  ),
-                  child: ListTile(
-                    title: Text(
-                      titulo,
-                      style: TextStyle(color: Colors.black), // Texto negro
-                    ),
-                    subtitle: Text(
-                      descripcion,
-                      style:
-                          TextStyle(color: Colors.black54), // Texto gris oscuro
-                    ),
-                    trailing: _getIconForLevel(nivel),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => DetalleRutinaScreen(
-                            rutina: rutina,
-                            fechaCreacion:
-                                formattedFechaCreacion, // Pasa la fecha formateada
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                );
-              },
+        stream: FirestoreService().rutinas(),
+        builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+          if (!snapshot.hasData) {
+            return Center(
+              child: CircularProgressIndicator(),
             );
-          }),
+          }
+          return ListView.builder(
+            itemCount: snapshot.data!.docs.length,
+            itemBuilder: (context, index) {
+              var rutina = snapshot.data!.docs[index];
+              var descripcion = rutina['descripcion'];
+              var fechaCreacion = rutina['fecha de creación'];
+              var nivel = rutina['nivel'];
+              var titulo = rutina['titulo'];
+
+              // Formatea la fecha de creación
+              var formattedFechaCreacion =
+                  DateFormat.yMd().format(fechaCreacion.toDate());
+
+              return Container(
+                margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                decoration: BoxDecoration(
+                  color: Color(0xffD99058), // Fondo naranja
+                  borderRadius: BorderRadius.circular(10), // Bordes redondeados
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black26,
+                      blurRadius: 5,
+                      offset: Offset(0, 2),
+                    ),
+                  ],
+                  border: Border.all(color: Colors.black),
+                ),
+                child: ListTile(
+                  title: Text(
+                    titulo,
+                    style: TextStyle(color: Colors.black), // Texto negro
+                  ),
+                  subtitle: Text(
+                    descripcion,
+                    style:
+                        TextStyle(color: Colors.black54), // Texto gris oscuro
+                  ),
+                  trailing: _getIconForLevel(nivel),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => DetalleRutinaScreen(
+                          rutina: rutina,
+                          fechaCreacion:
+                              formattedFechaCreacion, // Pasa la fecha formateada
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              );
+            },
+          );
+        },
+      ),
+      floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            // Acción a realizar al presionar el botón flotante
+          },
+          backgroundColor: Colors.orange, // Color de fondo naranja
+          child: Icon(Icons.add, color: Colors.black),
+          shape: RoundedRectangleBorder(
+            borderRadius:
+                BorderRadius.circular(30.0), // Radio de borde circular
+            side: BorderSide(color: Colors.black),
+          ) // Icono de añadir en negro
+          ),
+      floatingActionButtonLocation: FloatingActionButtonLocation
+          .endFloat, // Ubicación en la esquina inferior derecha
     );
   }
 }
@@ -234,6 +248,23 @@ class DetalleRutinaScreen extends StatelessWidget {
                 ),
               ),
             ),
+            SizedBox(height: 16),
+            Center(
+              child: Container(
+                width: 500,
+                height: 50, // Alto del contenedor
+                decoration: BoxDecoration(
+                  color: Colors.red, // Color de fondo del contenedor
+                  shape: BoxShape.rectangle, // Forma circular del contenedor
+                ),
+                child: IconButton(
+                  icon: Icon(Icons.delete, color: Colors.black),
+                  onPressed: () {
+                    // Acción a realizar al presionar el botón de borrar
+                  },
+                ),
+              ),
+            )
           ],
         ),
       ),
