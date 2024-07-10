@@ -1,9 +1,7 @@
-import 'package:app/services/firestore_service.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-
 
 class RutinasScreen extends StatelessWidget {
   const RutinasScreen({Key? key});
@@ -15,7 +13,7 @@ class RutinasScreen extends StatelessWidget {
         title: Text('Rutinas'),
       ),
       body: StreamBuilder(
-        stream: FirestoreService().rutinas(),
+        stream: FirebaseFirestore.instance.collection('Rutinas').snapshots(),
         builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
           if (!snapshot.hasData) {
             return Center(
@@ -32,7 +30,18 @@ class RutinasScreen extends StatelessWidget {
               return ListTile(
                 title: Text(rutina['titulo']),
                 subtitle: Text(rutina['descripcion']),
-                trailing: Text(rutina['nivel']),
+                trailing: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(rutina['nivel']),
+                    IconButton(
+                      icon: Icon(Icons.delete),
+                      onPressed: () {
+                        _confirmarEliminacion(context, rutina.id);
+                      },
+                    ),
+                  ],
+                ),
                 onTap: () {
                   Navigator.push(
                     context,
@@ -60,6 +69,33 @@ class RutinasScreen extends StatelessWidget {
       ),
     );
   }
+
+  void _confirmarEliminacion(BuildContext context, String rutinaId) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Confirmar Eliminación'),
+          content: Text('¿Estás seguro de que quieres eliminar esta rutina?'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('Cancelar'),
+            ),
+            TextButton(
+              onPressed: () {
+                FirebaseFirestore.instance.collection('Rutinas').doc(rutinaId).delete();
+                Navigator.of(context).pop();
+              },
+              child: Text('Eliminar'),
+            ),
+          ],
+        );
+      },
+    );
+  }
 }
 
 class DetalleRutinaScreen extends StatelessWidget {
@@ -82,8 +118,8 @@ class DetalleRutinaScreen extends StatelessWidget {
       ),
       body: Padding(
         padding: EdgeInsets.all(16.0),
-        child: FutureBuilder<String>(
-          future: FirestoreService().getUserName(rutina['creador']),
+        child: FutureBuilder<DocumentSnapshot>(
+          future: FirebaseFirestore.instance.collection('Usuarios').doc(rutina['creador']).get(),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return Center(child: CircularProgressIndicator());
@@ -91,7 +127,7 @@ class DetalleRutinaScreen extends StatelessWidget {
               if (snapshot.hasError) {
                 return Center(child: Text('Error: ${snapshot.error}'));
               } else {
-                String creadorNombre = snapshot.data ?? 'Usuario Desconocido';
+                String creadorNombre = snapshot.data?['nombre'] ?? 'Usuario Desconocido';
 
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -109,9 +145,9 @@ class DetalleRutinaScreen extends StatelessWidget {
                     Text('Ejercicios:'),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      children: ejercicios.map<Widget>((ejercicio) {
+                      children: List<Widget>.from(ejercicios.map((ejercicio) {
                         return Text('- $ejercicio');
-                      }).toList(),
+                      })),
                     ),
                   ],
                 );
@@ -123,11 +159,6 @@ class DetalleRutinaScreen extends StatelessWidget {
     );
   }
 }
-
-
-
-
-
 
 class AgregarRutinaScreen extends StatefulWidget {
   @override
@@ -305,4 +336,3 @@ class _AgregarRutinaScreenState extends State<AgregarRutinaScreen> {
     );
   }
 }
-
