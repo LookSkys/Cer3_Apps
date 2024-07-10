@@ -1,11 +1,12 @@
 import 'package:app/services/firestore_service.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart'; // Importa intl para usar DateFormat
+import 'package:intl/intl.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+
 
 class RutinasScreen extends StatelessWidget {
   const RutinasScreen({Key? key});
-  
 
   @override
   Widget build(BuildContext context) {
@@ -14,39 +15,31 @@ class RutinasScreen extends StatelessWidget {
         title: Text('Rutinas'),
       ),
       body: StreamBuilder(
-        stream: FirestoreService().rutinas(), 
+        stream: FirestoreService().rutinas(),
         builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
           if (!snapshot.hasData) {
             return Center(
               child: CircularProgressIndicator(),
-            );          
+            );
           }
           return ListView.builder(
             itemCount: snapshot.data!.docs.length,
             itemBuilder: (context, index) {
               var rutina = snapshot.data!.docs[index];
-              var creador = rutina['creador'];
-              var descripcion = rutina['descripcion'];
-              var duracion = rutina['duracion'];
-              var ejercicios = rutina['ejercicios'];
-              var fechaCreacion = rutina['fecha de creación'];
-              var nivel = rutina['nivel'];
-              var titulo = rutina['titulo'];
-
-              // Formatea la fecha de creación
-              var formattedFechaCreacion = DateFormat.yMd().format(fechaCreacion.toDate());
+              var formattedFechaCreacion =
+                  DateFormat.yMd().format(rutina['fecha de creación'].toDate());
 
               return ListTile(
-                title: Text(titulo),
-                subtitle: Text(descripcion),
-                trailing: Text(nivel),
+                title: Text(rutina['titulo']),
+                subtitle: Text(rutina['descripcion']),
+                trailing: Text(rutina['nivel']),
                 onTap: () {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
                       builder: (context) => DetalleRutinaScreen(
                         rutina: rutina,
-                        fechaCreacion: formattedFechaCreacion, // Pasa la fecha formateada
+                        fechaCreacion: formattedFechaCreacion,
                       ),
                     ),
                   );
@@ -54,7 +47,16 @@ class RutinasScreen extends StatelessWidget {
               );
             },
           );
-        }
+        },
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => AgregarRutinaScreen()),
+          );
+        },
+        child: Icon(Icons.add),
       ),
     );
   }
@@ -62,48 +64,245 @@ class RutinasScreen extends StatelessWidget {
 
 class DetalleRutinaScreen extends StatelessWidget {
   final DocumentSnapshot rutina;
-  final String fechaCreacion; // Recibe la fecha formateada como argumento
+  final String fechaCreacion;
 
-  const DetalleRutinaScreen({Key? key, required this.rutina, required this.fechaCreacion}) : super(key: key);
+  const DetalleRutinaScreen({
+    Key? key,
+    required this.rutina,
+    required this.fechaCreacion,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    var creador = rutina['creador'];
-    var descripcion = rutina['descripcion'];
-    var duracion = rutina['duracion'];
     var ejercicios = rutina['ejercicios'];
-    var nivel = rutina['nivel'];
-    var titulo = rutina['titulo'];
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(titulo),
+        title: Text(rutina['titulo']),
       ),
       body: Padding(
         padding: EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('Creador: $creador'),
-            SizedBox(height: 8),
-            Text('Descripción: $descripcion'),
-            SizedBox(height: 8),
-            Text('Duración: $duracion'),
-            SizedBox(height: 8),
-            Text('Nivel: $nivel'),
-            SizedBox(height: 8),
-            Text('Fecha de creación: $fechaCreacion'), // Muestra la fecha formateada
-            SizedBox(height: 8),
-            Text('Ejercicios:'),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: ejercicios.map<Widget>((ejercicio) {
-                return Text('- $ejercicio');
-              }).toList(),
-            ),
-          ],
+        child: FutureBuilder<String>(
+          future: FirestoreService().getUserName(rutina['creador']),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Center(child: CircularProgressIndicator());
+            } else {
+              if (snapshot.hasError) {
+                return Center(child: Text('Error: ${snapshot.error}'));
+              } else {
+                String creadorNombre = snapshot.data ?? 'Usuario Desconocido';
+
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('Creador: $creadorNombre'),
+                    SizedBox(height: 8),
+                    Text('Descripción: ${rutina['descripcion']}'),
+                    SizedBox(height: 8),
+                    Text('Duración: ${rutina['duracion']}'),
+                    SizedBox(height: 8),
+                    Text('Nivel: ${rutina['nivel']}'),
+                    SizedBox(height: 8),
+                    Text('Fecha de creación: $fechaCreacion'),
+                    SizedBox(height: 8),
+                    Text('Ejercicios:'),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: ejercicios.map<Widget>((ejercicio) {
+                        return Text('- $ejercicio');
+                      }).toList(),
+                    ),
+                  ],
+                );
+              }
+            }
+          },
         ),
       ),
     );
   }
 }
+
+
+
+
+
+
+class AgregarRutinaScreen extends StatefulWidget {
+  @override
+  _AgregarRutinaScreenState createState() => _AgregarRutinaScreenState();
+}
+
+class _AgregarRutinaScreenState extends State<AgregarRutinaScreen> {
+  final _formKey = GlobalKey<FormState>();
+  final TextEditingController _tituloController = TextEditingController();
+  final TextEditingController _descripcionController = TextEditingController();
+  final TextEditingController _duracionController = TextEditingController();
+  String _nivelValue = 'Principiante';
+  final TextEditingController _ejercicioController = TextEditingController();
+  List<String> _ejercicios = [];
+
+  @override
+  void dispose() {
+    _tituloController.dispose();
+    _descripcionController.dispose();
+    _duracionController.dispose();
+    _ejercicioController.dispose();
+    super.dispose();
+  }
+
+  void _agregarEjercicio(String ejercicio) {
+    setState(() {
+      _ejercicios.add(ejercicio);
+      _ejercicioController.clear();
+    });
+  }
+
+  void _guardarRutina() {
+    if (_formKey.currentState!.validate()) {
+      // Obtener el usuario actual
+      User? user = FirebaseAuth.instance.currentUser;
+
+      if (user != null) {
+        FirebaseFirestore.instance.collection('Rutinas').add({
+          'titulo': _tituloController.text,
+          'descripcion': _descripcionController.text,
+          'duracion': _duracionController.text,
+          'nivel': _nivelValue,
+          'ejercicios': _ejercicios,
+          'creador': user.uid,
+          'fecha de creación': Timestamp.now(),
+        });
+        Navigator.pop(context);
+      } else {
+        // Manejar el caso en el que el usuario no esté autenticado
+        // Esto debería ser controlado en la lógica de tu aplicación
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Agregar Rutina'),
+      ),
+      body: Padding(
+        padding: EdgeInsets.all(16.0),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              TextFormField(
+                controller: _tituloController,
+                decoration: InputDecoration(labelText: 'Título'),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Por favor, ingrese un título';
+                  }
+                  return null;
+                },
+              ),
+              TextFormField(
+                controller: _descripcionController,
+                decoration: InputDecoration(labelText: 'Descripción'),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Por favor, ingrese una descripción';
+                  }
+                  return null;
+                },
+              ),
+              TextFormField(
+                controller: _duracionController,
+                decoration: InputDecoration(labelText: 'Duración'),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Por favor, ingrese una duración';
+                  }
+                  return null;
+                },
+              ),
+              DropdownButtonFormField<String>(
+                value: _nivelValue,
+                onChanged: (String? value) {
+                  setState(() {
+                    _nivelValue = value!;
+                  });
+                },
+                items: <String>['Principiante', 'Intermedio', 'Avanzado']
+                    .map<DropdownMenuItem<String>>((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
+                decoration: InputDecoration(labelText: 'Nivel'),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Por favor, seleccione un nivel';
+                  }
+                  return null;
+                },
+              ),
+              SizedBox(height: 16),
+              Text('Ejercicios'),
+              Row(
+                children: [
+                  Expanded(
+                    child: TextFormField(
+                      controller: _ejercicioController,
+                      decoration: InputDecoration(labelText: 'Ejercicio'),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          if (_ejercicios.isEmpty) {
+                            return 'Por favor, ingrese un ejercicio';
+                          }
+                        }
+                        return null;
+                      },
+                    ),
+                  ),
+                  IconButton(
+                    icon: Icon(Icons.add),
+                    onPressed: () {
+                      if (_ejercicioController.text.isNotEmpty) {
+                        _agregarEjercicio(_ejercicioController.text);
+                      }
+                    },
+                  ),
+                ],
+              ),
+              SizedBox(height: 16),
+              Expanded(
+                child: ListView.builder(
+                  itemCount: _ejercicios.length,
+                  itemBuilder: (context, index) {
+                    return ListTile(
+                      title: Text(_ejercicios[index]),
+                      trailing: IconButton(
+                        icon: Icon(Icons.delete),
+                        onPressed: () {
+                          setState(() {
+                            _ejercicios.removeAt(index);
+                          });
+                        },
+                      ),
+                    );
+                  },
+                ),
+              ),
+              ElevatedButton(
+                onPressed: _guardarRutina,
+                child: Text('Guardar'),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
