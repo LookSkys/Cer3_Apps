@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 class LoginScreen extends StatelessWidget {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -31,8 +32,7 @@ class LoginScreen extends StatelessWidget {
             userDoc.set({
               'correo': user.email,
               'fecha_registro': FieldValue.serverTimestamp(),
-              'nombre':
-                  user.displayName, // Asigna el RUT adecuado si es necesario
+              'nombre': user.displayName, // Asigna el RUT adecuado si es necesario
             });
           }
         }
@@ -47,43 +47,103 @@ class LoginScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Inicio de Sesión'),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            ElevatedButton(
-              onPressed: () async {
-                User? user = await _signInWithGoogle();
-                if (user != null) {
-                  Navigator.pushReplacementNamed(context, '/home');
-                } else {
-                  showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return AlertDialog(
-                        title: Text('Error'),
-                        content: Text(
-                            'Hubo un problema al iniciar sesión con Google.'),
-                        actions: <Widget>[
-                          TextButton(
-                            child: Text('Aceptar'),
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },
-                          ),
-                        ],
-                      );
-                    },
-                  );
-                }
-              },
-              child: Text('Iniciar sesión con Google'),
+      body: Stack(
+        children: <Widget>[
+          Positioned.fill(
+            child: Image.asset(
+              'assets/images/fondo_login2.jpg',
+              fit: BoxFit.cover,
             ),
-          ],
-        ),
+          ),
+          Center(
+            child: IntrinsicHeight(
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 24.0),
+                decoration: BoxDecoration(
+                  color: Colors.black54,
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    Image.asset(
+                      'assets/images/usm_logo.png',
+                      height: 100.0,
+                    ),
+                    SizedBox(height: 20.0),
+                    Container(
+                      padding: EdgeInsets.all(8.0),
+                      decoration: BoxDecoration(
+                        color: Colors.black54,
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                      child: Text(
+                        '¡Bienvenido!',
+                        style: TextStyle(
+                          fontSize: 32.0,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 10.0),
+                    Container(
+                      padding: EdgeInsets.all(8.0),
+                      decoration: BoxDecoration(
+                        color: Colors.black,
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                      child: Text(
+                        'Gimnasio USM Viña',
+                        style: TextStyle(
+                          fontSize: 19.0,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 20.0),
+                    ElevatedButton(
+                      onPressed: () async {
+                        User? user = await _signInWithGoogle();
+                        if (user != null) {
+                          Navigator.pushReplacementNamed(context, '/home');
+                        } else {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: Text('Error'),
+                                content: Text(
+                                    'Hubo un problema al iniciar sesión con Google.'),
+                                actions: <Widget>[
+                                  TextButton(
+                                    child: Text('Aceptar'),
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                        }
+                      },
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          Icon(MdiIcons.google),
+                          SizedBox(width: 8.0),
+                          Text('Iniciar sesión con Google'),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
