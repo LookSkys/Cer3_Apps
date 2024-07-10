@@ -2,16 +2,10 @@ import 'package:app/services/firestore_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:google_sign_in/google_sign_in.dart';
+
 
 class Horarios extends StatelessWidget {
   final FirebaseAuth _auth = FirebaseAuth.instance;
-
-  void _signOut(BuildContext context) async {
-    await _auth.signOut();
-    await GoogleSignIn().signOut();
-    Navigator.pushReplacementNamed(context, '/login');
-  }
 
   Future<void> _enrollUser(
       DocumentSnapshot horario, BuildContext context) async {
@@ -62,12 +56,6 @@ class Horarios extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('Horarios'),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.logout),
-            onPressed: () => _signOut(context),
-          ),
-        ],
       ),
       body: StreamBuilder(
         stream: FirestoreService().horarios(),

@@ -14,6 +14,10 @@ class FirestoreService {
     return FirebaseFirestore.instance.collection('Usuarios').snapshots();
   }
 
+  Stream<QuerySnapshot> rutinas() {
+    return FirebaseFirestore.instance.collection('Rutinas').snapshots();
+  }
+
   Future<void> enrollUser(DocumentSnapshot horario, User user) async {
     final enrolmentRef =
         horario.reference.collection('enrolamiento').doc(user.uid);

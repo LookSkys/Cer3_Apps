@@ -58,7 +58,7 @@ class LoginScreen extends StatelessWidget {
               onPressed: () async {
                 User? user = await _signInWithGoogle();
                 if (user != null) {
-                  Navigator.pushReplacementNamed(context, '/horarios');
+                  Navigator.pushReplacementNamed(context, '/home');
                 } else {
                   showDialog(
                     context: context,
