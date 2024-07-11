@@ -23,16 +23,16 @@ class LoginScreen extends StatelessWidget {
         final User? user = userCredential.user;
 
         if (user != null) {
-          // Verifica si el usuario ya existe en Firestore
+          
           final userDoc =
               FirebaseFirestore.instance.collection('Usuarios').doc(user.uid);
           final userSnapshot = await userDoc.get();
           if (!userSnapshot.exists) {
-            // Si no existe, guarda la información del usuario
+            
             userDoc.set({
               'correo': user.email,
               'fecha_registro': FieldValue.serverTimestamp(),
-              'nombre': user.displayName, // Asigna el RUT adecuado si es necesario
+              'nombre': user.displayName, 
             });
           }
         }

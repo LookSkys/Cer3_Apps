@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class FirestoreService {
-  //Obtener lista de Tareas
   Stream<QuerySnapshot> horarios() {
     return FirebaseFirestore.instance
         .collection('Horarios')
@@ -25,7 +24,7 @@ class FirestoreService {
         'duracion': duracion,
         'nivel': nivel,
         'ejercicios': ejercicios,
-        'creador': creadorId, // Cambiado a 'creador' en lugar de 'creadorId'
+        'creador': creadorId, 
         'fecha de creación': Timestamp.now(),
       });
     } catch (e) {
@@ -43,7 +42,7 @@ class FirestoreService {
 
       if (userSnapshot.exists) {
         return userSnapshot[
-            'nombre']; // Accede al campo 'nombre' en el documento del usuario
+            'nombre']; 
       } else {
         return 'Usuario Desconocido';
       }

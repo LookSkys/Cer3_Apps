@@ -48,7 +48,6 @@ class _AgregarRutinaScreenState extends State<AgregarRutinaScreen> {
         });
         Navigator.pop(context);
       } else {
-        // Manejar el caso en el que el usuario no esté autenticado
       }
     }
   }

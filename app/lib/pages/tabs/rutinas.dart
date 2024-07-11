@@ -24,7 +24,7 @@ class RutinasScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xff091819), // Fondo negro
+      backgroundColor: Color(0xff091819), 
       body: StreamBuilder(
         stream: FirestoreService().rutinas(),
         builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
@@ -42,15 +42,15 @@ class RutinasScreen extends StatelessWidget {
               var nivel = rutina['nivel'];
               var titulo = rutina['titulo'];
 
-              // Formatea la fecha de creación
+             
               var formattedFechaCreacion =
                   DateFormat.yMd().format(fechaCreacion.toDate());
 
               return Container(
                 margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                 decoration: BoxDecoration(
-                  color: Color(0xffD99058), // Fondo naranja
-                  borderRadius: BorderRadius.circular(10), // Bordes redondeados
+                  color: Color(0xffD99058), 
+                  borderRadius: BorderRadius.circular(10), 
                   boxShadow: [
                     BoxShadow(
                       color: Colors.black26,
@@ -63,12 +63,12 @@ class RutinasScreen extends StatelessWidget {
                 child: ListTile(
                   title: Text(
                     titulo,
-                    style: TextStyle(color: Colors.black), // Texto negro
+                    style: TextStyle(color: Colors.black), 
                   ),
                   subtitle: Text(
                     descripcion,
                     style:
-                        TextStyle(color: Colors.black54), // Texto gris oscuro
+                        TextStyle(color: Colors.black54), 
                   ),
                   trailing: _getIconForLevel(nivel),
                   onTap: () {
@@ -78,7 +78,7 @@ class RutinasScreen extends StatelessWidget {
                         builder: (context) => DetalleRutinaScreen(
                           rutina: rutina,
                           fechaCreacion:
-                              formattedFechaCreacion, // Pasa la fecha formateada
+                              formattedFechaCreacion, 
                         ),
                       ),
                     );
@@ -93,16 +93,16 @@ class RutinasScreen extends StatelessWidget {
           onPressed: () {
             Navigator.pushNamed(context, '/agregarRutina');
           },
-          backgroundColor: Colors.orange, // Color de fondo naranja
+          backgroundColor: Colors.orange, 
           child: Icon(Icons.add, color: Colors.black),
           shape: RoundedRectangleBorder(
             borderRadius:
-                BorderRadius.circular(30.0), // Radio de borde circular
+                BorderRadius.circular(30.0), 
             side: BorderSide(color: Colors.black),
-          ) // Icono de añadir en negro
+          ) 
           ),
       floatingActionButtonLocation: FloatingActionButtonLocation
-          .endFloat, // Ubicación en la esquina inferior derecha
+          .endFloat, 
     );
   }
 }
@@ -147,8 +147,8 @@ void _confirmarEliminacion(BuildContext context, String rutinaId) {
                   .doc(rutinaId)
                   .delete()
                   .then((_) {
-                Navigator.of(context).pop(); // Cierra el cuadro de diálogo
-                Navigator.of(context).pop(); // Vuelve a la pantalla anterior
+                Navigator.of(context).pop(); 
+                Navigator.of(context).pop(); 
               });
             },
             style: TextButton.styleFrom(
@@ -164,15 +164,16 @@ void _confirmarEliminacion(BuildContext context, String rutinaId) {
 
 class DetalleRutinaScreen extends StatelessWidget {
   final DocumentSnapshot rutina;
-  final String fechaCreacion; // Recibe la fecha formateada como argumento
+  final String fechaCreacion;
 
-  const DetalleRutinaScreen(
-      {Key? key, required this.rutina, required this.fechaCreacion})
-      : super(key: key);
+  const DetalleRutinaScreen({
+    Key? key,
+    required this.rutina,
+    required this.fechaCreacion,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    var creador = rutina['creador'];
     var descripcion = rutina['descripcion'];
     var duracion = rutina['duracion'];
     var ejercicios = rutina['ejercicios'];
@@ -187,7 +188,7 @@ class DetalleRutinaScreen extends StatelessWidget {
           style: TextStyle(color: Colors.white),
         ),
         backgroundColor: Color(0xff091819),
-        iconTheme: IconThemeData(color: Colors.white), // Fondo negro
+        iconTheme: IconThemeData(color: Colors.white), 
       ),
       body: Padding(
         padding: EdgeInsets.all(16.0),
@@ -195,17 +196,33 @@ class DetalleRutinaScreen extends StatelessWidget {
           children: [
             Card(
               color: Color(0xffD99058),
-              child: ListTile(
-                leading: Icon(Icons.person, color: Colors.white),
-                title: Text(
-                  'Creador',
-                  style: TextStyle(
-                      color: Colors.black, fontWeight: FontWeight.bold),
-                ),
-                subtitle: Text(
-                  creador,
-                  style: TextStyle(color: Colors.black87),
-                ),
+              child: FutureBuilder<DocumentSnapshot>(
+                future: FirebaseFirestore.instance
+                    .collection('Usuarios')
+                    .doc(rutina['creador'])
+                    .get(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return Center(child: CircularProgressIndicator());
+                  } else if (snapshot.hasError) {
+                    return Center(child: Text('Error: ${snapshot.error}'));
+                  } else {
+                    String creadorNombre =
+                        snapshot.data?['nombre'] ?? 'Usuario Desconocido';
+                    return ListTile(
+                      leading: Icon(Icons.person, color: Colors.white),
+                      title: Text(
+                        'Creador',
+                        style: TextStyle(
+                            color: Colors.black, fontWeight: FontWeight.bold),
+                      ),
+                      subtitle: Text(
+                        creadorNombre,
+                        style: TextStyle(color: Colors.black87),
+                      ),
+                    );
+                  }
+                },
               ),
             ),
             Divider(color: Colors.white54),
@@ -267,7 +284,7 @@ class DetalleRutinaScreen extends StatelessWidget {
                       color: Colors.black, fontWeight: FontWeight.bold),
                 ),
                 subtitle: Text(
-                  fechaCreacion, // Muestra la fecha formateada
+                  fechaCreacion, 
                   style: TextStyle(color: Colors.black87),
                 ),
               ),
@@ -308,10 +325,10 @@ class DetalleRutinaScreen extends StatelessWidget {
             Center(
               child: Container(
                 width: double.infinity,
-                height: 50, // Alto del contenedor
+                height: 50, 
                 decoration: BoxDecoration(
-                  color: Colors.red, // Color de fondo del contenedor
-                  shape: BoxShape.rectangle, // Forma rectangular del contenedor
+                  color: Colors.red, 
+                  shape: BoxShape.rectangle, 
                 ),
                 child: IconButton(
                   icon: Icon(Icons.delete, color: Colors.white),

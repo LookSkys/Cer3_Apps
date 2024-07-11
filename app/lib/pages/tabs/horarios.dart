@@ -53,7 +53,7 @@ class Horarios extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xff091819), // Fondo negro
+      backgroundColor: Color(0xff091819), 
       body: StreamBuilder(
         stream: FirestoreService().horarios(),
         builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
@@ -85,9 +85,9 @@ class Horarios extends StatelessWidget {
                     return Container(
                       margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                       decoration: BoxDecoration(
-                        color: Colors.orange, // Fondo naranja
+                        color: Colors.orange, 
                         borderRadius:
-                            BorderRadius.circular(10), // Bordes redondeados
+                            BorderRadius.circular(10), 
                         boxShadow: [
                           BoxShadow(
                             color: Colors.black26,
@@ -104,8 +104,8 @@ class Horarios extends StatelessWidget {
                             Text(
                               horario['titulo'],
                               style: TextStyle(
-                                color: Colors.black, // Texto negro
-                                fontWeight: FontWeight.bold, // Texto en negrita
+                                color: Colors.black, 
+                                fontWeight: FontWeight.bold, 
                               ),
                             ),
                             Row(
@@ -113,12 +113,12 @@ class Horarios extends StatelessWidget {
                                 Icon(Icons.access_time, color: Colors.black54),
                                 SizedBox(
                                     width:
-                                        4), // Espacio entre el icono y el texto
+                                        4), 
                                 Text(
                                   '${startTime.format(context)} a ${endTime.format(context)}',
                                   style: TextStyle(
                                       color:
-                                          Colors.black54), // Texto gris oscuro
+                                          Colors.black54), 
                                 ),
                               ],
                             ),
@@ -128,11 +128,11 @@ class Horarios extends StatelessWidget {
                           children: [
                             Icon(Icons.people, color: Colors.black54),
                             SizedBox(
-                                width: 4), // Espacio entre el icono y el texto
+                                width: 4), 
                             Text(
                               'Capacidad máxima: $maxCapacity',
                               style: TextStyle(
-                                  color: Colors.black54), // Texto gris oscuro
+                                  color: Colors.black54), 
                             ),
                           ],
                         ),
@@ -151,9 +151,9 @@ class Horarios extends StatelessWidget {
                   return Container(
                     margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                     decoration: BoxDecoration(
-                      color: Color(0xffD99058), // Fondo naranja
+                      color: Color(0xffD99058), 
                       borderRadius:
-                          BorderRadius.circular(10), // Bordes redondeados
+                          BorderRadius.circular(10), 
                       boxShadow: [
                         BoxShadow(
                           color: Colors.black26,
@@ -170,8 +170,8 @@ class Horarios extends StatelessWidget {
                           Text(
                             horario['titulo'],
                             style: TextStyle(
-                              color: Colors.black, // Texto negro
-                              fontWeight: FontWeight.bold, // Texto en negrita
+                              color: Colors.black, 
+                              fontWeight: FontWeight.bold, 
                             ),
                           ),
                           Row(
@@ -179,11 +179,11 @@ class Horarios extends StatelessWidget {
                               Icon(Icons.access_time, color: Colors.black54),
                               SizedBox(
                                   width:
-                                      4), // Espacio entre el icono y el texto
+                                      4), 
                               Text(
                                 '${startTime.format(context)} a ${endTime.format(context)}',
                                 style: TextStyle(
-                                    color: Colors.black54), // Texto gris oscuro
+                                    color: Colors.black54), 
                               ),
                             ],
                           ),
@@ -193,11 +193,11 @@ class Horarios extends StatelessWidget {
                         children: [
                           Icon(Icons.people, color: Colors.black54),
                           SizedBox(
-                              width: 4), // Espacio entre el icono y el texto
+                              width: 4), 
                           Text(
                             '$enrolledCount / $maxCapacity',
                             style: TextStyle(
-                                color: Colors.black), // Texto gris oscuro
+                                color: Colors.black), 
                           ),
                         ],
                       ),
@@ -205,23 +205,23 @@ class Horarios extends StatelessWidget {
                           ? ElevatedButton(
                               onPressed: () => _unenrollUser(horario, context),
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.black, // Fondo negro
+                                backgroundColor: Colors.black, 
                               ),
                               child: Text(
                                 'Desinscribirse',
                                 style: TextStyle(
-                                    color: Color(0xffD99058)), // Texto naranja
+                                    color: Color(0xffD99058)), 
                               ),
                             )
                           : ElevatedButton(
                               onPressed: () => _enrollUser(horario, context),
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.black, // Fondo negro
+                                backgroundColor: Colors.black, 
                               ),
                               child: Text(
                                 'Inscribirse',
                                 style: TextStyle(
-                                    color: Colors.white), // Texto naranja
+                                    color: Colors.white), 
                               ),
                             ),
                     ),
